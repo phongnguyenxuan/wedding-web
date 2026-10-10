@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Xem animation – công cụ dev</title>
+<style>
+  body{ margin:0; padding:16px; background:#e9e4f0; font:14px ui-monospace, monospace; color:#2a1a2e; }
+  #hidden{ display:none; }
+  canvas.z{ image-rendering:pixelated; display:block; background:#fff; margin:6px 0; }
+  a{ margin-right:10px; }
+</style>
+</head>
+<body>
+<!-- Các phần tử game cần có để nạp script (ẩn đi) -->
+<div id="hidden">
+  <div id="app"><div id="stage"><canvas id="game" width="480" height="270"></canvas>
+    <span id="lvlName"></span><button id="mute"></button><button id="toCard"></button><div id="tip"></div>
+    <div id="memory"><div id="memPhoto"></div><div id="memCap"></div></div>
+    <div id="banner"><div id="bnN"></div><div id="bnT"></div><div id="bnH"></div></div>
+    <div id="dialog"><div id="dlgWho"></div><div id="dlgTxt"></div></div></div></div>
+  <div id="modal"></div>
+</div>
+<p>Trang dev: animation phóng to. Cảnh:
+  <a href="?scene=eat">eat</a><a href="?scene=walk">walk</a><a href="?scene=eat&strip=1">eat (dải khung)</a><a href="?scene=walk&strip=1">walk (dải khung)</a></p>
+<div id="out"></div>
+<script src="../js/config.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/sprites.js"></script>
+<script src="../js/audio.js"></script>
+<script src="../js/render.js"></script>
+<script src="../js/actors.js"></script>
+<script src="../js/scenes.js"></script>
+<script src="../js/chapters.js"></script>
+<script src="../js/story.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/card.js"></script>
+<script>
+const Q = new URLSearchParams(location.search), SCENE = Q.get('scene') || 'eat', STRIP = Q.get('strip'), Z = +(Q.get('scale') || 6);
+sfx = () => {};
+buildSprites(); buildVariants();
+mode = 'scene'; L = { theme: 'hanoi', solids: [], plats: [] }; cam = 0;
+let crop;
+if (SCENE === 'eat') {
+  props.eating = true; addActor('bride', 'bride', 226, 1); addActor('groom', 'groom', 292, -1);
+  setPose(actors.bride, 'eat'); setPose(actors.groom, 'eat');
+  crop = () => [+(Q.get('x0') || 205), GY - 46, +(Q.get('w') || 120), 50];   // ?x0=215&w=40 để soi riêng cô dâu, ?x0=281&w=40 chú rể
+} else {
+  addActor('groom', 'groom', 100, 1); addActor('bride', 'bride', 60, 1); actors.groom.target = 400; actors.bride.target = 360;
+  // ?x0=… cố định khung nhìn (để thấy bàn chân trụ có đứng yên không), mặc định bám theo chú rể
+  crop = () => { const a = actors.groom; return [Q.get('x0') ? +Q.get('x0') : Math.round(a.x - cam) - 70, GY - 50, +(Q.get('w') || 110), 58]; };
+}
+function tick(dt) {
+  time += dt; updateActors(dt);
+  for (const a of Object.values(actors)) if (SCENE === 'walk' && a.target == null) a.target = a.x > 200 ? 40 : 400;
+  cam = 0;
+}
+function draw() { drawBg(L.theme); drawGround(L.theme); drawHanoiStall(); drawActors(); drawParticles(); }
+function shot(w) { const [x, y, cw, ch] = crop(), c = document.createElement('canvas'); c.width = cw * w; c.height = ch * w; c.className = 'z';
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(cv, x, y, cw, ch, 0, 0, cw * w, ch * w); return c; }
+const out = document.getElementById('out');
+if (STRIP) {
+  const n = +(Q.get('n') || 12), every = +(Q.get('every') || (SCENE === 'eat' ? .25 : .05));
+  const row = document.createElement('div'); row.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px'; out.append(row);
+  tick(+(Q.get('t0') || 0.01));
+  for (let i = 0; i < n; i++) { for (let k = 0; k < Math.round(every * 60); k++) tick(1 / 60); draw();
+    const f = document.createElement('figure'); f.style.margin = 0; const s = shot(+(Q.get('scale') || 3));
+    const cap = document.createElement('figcaption'); cap.textContent = 't=' + time.toFixed(2) + ' ' + Object.values(actors).map(a => a.name[0] + ':' + (a._f ? a._f.legs + '/' + a._f.arm : '')).join(' ');
+    cap.style.fontSize = '10px'; f.append(s, cap); row.append(f); }
+} else {
+  const view = shot(Z); out.append(view); const g = view.getContext('2d'); g.imageSmoothingEnabled = false;
+  let last = 0; (function loop(t) { const dt = Math.min(.1, (t - last) / 1000 || 0); last = t; tick(dt); draw();
+    const [x, y, cw, ch] = crop(); g.clearRect(0, 0, view.width, view.height); g.drawImage(cv, x, y, cw, ch, 0, 0, cw * Z, ch * Z); requestAnimationFrame(loop); })(0);
+}
+</script>
+</body>
+</html>

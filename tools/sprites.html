@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Xem sprite – công cụ dev</title>
+<style>
+  body{ margin:0; padding:16px; background:#e9e4f0; font:14px ui-monospace, monospace; color:#2a1a2e; }
+  #hidden{ display:none; }
+  #grid{ display:flex; flex-wrap:wrap; gap:10px; }
+  figure{ margin:0; background:#fff; padding:6px; text-align:center; }
+  figure canvas{ image-rendering:pixelated; display:block; }
+  figcaption{ font-size:11px; margin-top:4px; }
+  h2{ font-size:16px; margin:18px 0 8px; }
+</style>
+</head>
+<body>
+<!-- Các phần tử game cần có để nạp script (ẩn đi) -->
+<div id="hidden">
+  <div id="app"><div id="stage"><canvas id="game" width="480" height="270"></canvas>
+    <span id="lvlName"></span><button id="mute"></button><button id="toCard"></button><div id="tip"></div>
+    <div id="memory"><div id="memPhoto"></div><div id="memCap"></div></div>
+    <div id="banner"><div id="bnN"></div><div id="bnT"></div><div id="bnH"></div></div>
+    <div id="dialog"><div id="dlgWho"></div><div id="dlgTxt"></div></div></div></div>
+  <div id="modal"></div>
+</div>
+<h1>Sprite nhân vật</h1>
+<p>Trang dev: hiển thị mọi khung hình nhân vật ở tỉ lệ ×<span id="sc"></span>. Mở qua server cục bộ (python -m http.server).</p>
+<div id="out"></div>
+<script src="../js/config.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/sprites.js"></script>
+<script src="../js/audio.js"></script>
+<script src="../js/render.js"></script>
+<script src="../js/actors.js"></script>
+<script src="../js/scenes.js"></script>
+<script src="../js/chapters.js"></script>
+<script src="../js/story.js"></script>
+<script src="../js/ui.js"></script>
+<script>
+const SC = +(new URLSearchParams(location.search).get('scale') || 5);
+document.getElementById('sc').textContent = SC;
+buildSprites(); buildVariants();
+function thumb(img) { const c = document.createElement('canvas'); c.width = img.width * SC; c.height = img.height * SC; const x = c.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(img, 0, 0, c.width, c.height); return c; }
+const out = document.getElementById('out'), groups = {};
+const only = new URLSearchParams(location.search).get('only');
+const all = (typeof spriteCatalog === 'function' ? spriteCatalog() : Object.entries(S.V)).filter(([k]) => !only || k.startsWith(only));
+for (const [key, img] of all) {
+  const g = key.split('|')[0];
+  if (!groups[g]) { const h = document.createElement('h2'); h.textContent = g; const d = document.createElement('div'); d.id = 'grid'; out.append(h, d); groups[g] = d; }
+  const f = document.createElement('figure'), cap = document.createElement('figcaption'); cap.textContent = key.split('|').slice(1).join(' · ');
+  f.append(thumb(img), cap); groups[g].append(f);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Phong &amp; Trang – Thiệp cưới 32-bit</title>
+<meta name="description" content="Thiệp cưới pixel 32-bit của Phong & Trang: xem hành trình của hai đứa rồi nhận thiệp mời mang tên bạn.">
+<meta name="theme-color" content="#3a1d2e">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Phong & Trang – Thiệp cưới 32-bit">
+<meta property="og:description" content="Xem hành trình của hai đứa rồi nhận thiệp mời mang tên bạn.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <canvas id="game" width="480" height="270"></canvas>
+    <div id="hud"><span class="lvl" id="lvlName"></span><span class="hbtn"><button id="mute" type="button">Âm: bật</button><button id="toCard" type="button">Xem thiệp</button></span></div>
+    <div id="tip"></div>
+    <div id="memory"><div class="ph" id="memPhoto"><span>Ảnh kỷ niệm<br>(thay bằng ảnh thật)</span></div><div class="cap" id="memCap"></div></div>
+    <div id="banner" hidden><div class="n" id="bnN"></div><div class="t" id="bnT"></div><div class="h" id="bnH"></div></div>
+    <div id="dialog" hidden role="dialog" aria-live="polite"><div class="who" id="dlgWho"></div><div class="txt" id="dlgTxt"></div><span class="more">▼</span></div>
+  </div>
+</div>
+<div id="modal"></div>
+<noscript><p style="text-align:center;padding:2em">Vui lòng bật JavaScript để xem thiệp cưới.</p></noscript>
+
+<!-- Thứ tự nạp quan trọng: config → core → … → main (khởi động) -->
+<script src="js/config.js"></script>
+<script src="js/core.js"></script>
+<script src="js/sprites.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/render.js"></script>
+<script src="js/actors.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/namdinh.js"></script>
+<script src="js/hoabinh.js"></script>
+<script src="js/danang.js"></script>
+<script src="js/hoian.js"></script>
+<script src="js/dalat.js"></script>
+<script src="js/quynhon.js"></script>
+<script src="js/phuquoc.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/story.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/card.js"></script>
+<script src="js/gif.js"></script>
+<script src="js/main.js"></script>
+<script src="js/debug.js"></script>
+</body>
+</html>

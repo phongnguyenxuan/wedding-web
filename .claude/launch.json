@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "wedding-web",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8000"],
+      "port": 8000
+    },
+    {
+      "name": "wedding-web-8010",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8010"],
+      "port": 8010
+    }
+  ]
+}
